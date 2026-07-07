@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>이상한 틱택토 🎮</title>
+    <title>이상한 틱택토</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -20,370 +15,146 @@
             align-items: center;
             padding: 20px;
         }
-
         .container {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            max-width: 500px;
             width: 100%;
         }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+        h1 { text-align: center; color: #333; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 20px; }
+        .rules { 
+            background: #f0f0f0; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            font-size: 14px;
         }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-        }
-
-        .rules-display {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-radius: 8px;
-        }
-
-        .rule-item {
-            margin-bottom: 12px;
-            font-size: 0.95em;
-        }
-
-        .rule-label {
-            font-weight: bold;
-            color: #667eea;
-        }
-
+        .rules div { margin-bottom: 8px; }
+        .label { font-weight: bold; color: #667eea; }
         .board {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 30px;
-            background: #f0f0f0;
-            padding: 15px;
-            border-radius: 10px;
+            grid-template-columns: repeat(3, 80px);
+            gap: 8px;
+            margin: 20px auto;
+            justify-content: center;
+            background: #eee;
+            padding: 10px;
+            border-radius: 8px;
         }
-
         .cell {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             background: white;
             border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 2em;
+            border-radius: 5px;
+            font-size: 32px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
-            user-select: none;
+            transition: all 0.2s;
         }
-
-        .cell:hover {
-            background: #f0f0f0;
-            border-color: #667eea;
-            transform: scale(1.05);
-        }
-
-        .cell.sealed {
-            background: #333;
-            color: #fff;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .cell.o {
-            color: #4285f4;
-        }
-
-        .cell.x {
-            color: #ea4335;
-        }
-
-        .status {
-            text-align: center;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            height: 30px;
-        }
-
-        .status.player {
-            color: #4285f4;
-            font-weight: bold;
-        }
-
-        .status.ai {
-            color: #ea4335;
-            font-weight: bold;
-        }
-
-        .status.message {
-            color: #34a853;
-            font-weight: bold;
-        }
-
+        .cell:hover { background: #f0f0f0; border-color: #667eea; }
+        .cell.o { color: #4285f4; }
+        .cell.x { color: #ea4335; }
         .score {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 20px;
-            font-size: 1.1em;
+            margin: 15px 0;
+            font-size: 14px;
         }
-
-        .score-item {
-            text-align: center;
-        }
-
-        .score-label {
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        .score-value {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
+        .score-item { text-align: center; }
+        .score-value { font-size: 24px; font-weight: bold; }
+        .status { text-align: center; font-size: 18px; font-weight: bold; margin: 15px 0; height: 30px; }
+        .turn { color: #4285f4; }
+        .ai-turn { color: #ea4335; }
+        .message { color: #34a853; }
+        .controls { display: flex; gap: 10px; justify-content: center; }
         button {
-            padding: 12px 30px;
-            font-size: 1em;
+            padding: 10px 20px;
+            font-size: 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
             font-weight: bold;
+            transition: all 0.3s;
         }
-
-        .btn-play {
+        .btn-start {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             flex: 1;
         }
-
-        .btn-play:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-play:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
+        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-reset {
             background: #ea4335;
             color: white;
         }
-
-        .btn-reset:hover {
-            background: #d33425;
-        }
-
-        .game-over {
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .game-over.win {
-            color: #34a853;
-        }
-
-        .game-over.lose {
-            color: #ea4335;
-        }
-
-        .game-over.draw {
-            color: #fbbc04;
-        }
-
-        .footer {
-            text-align: center;
-            color: #999;
-            font-size: 0.9em;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 2em;
-            }
-
-            .cell {
-                width: 80px;
-                height: 80px;
-                font-size: 1.5em;
-            }
-
-            .board {
-                gap: 8px;
-                padding: 10px;
-            }
-        }
-
-        .special-cell {
-            position: relative;
-            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
-            color: white !important;
-        }
-
-        .special-cell::after {
-            content: '✨';
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            font-size: 1em;
-        }
-
-        .tutorial {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            font-size: 0.95em;
-            line-height: 1.6;
-        }
-
-        .turn-indicator {
-            text-align: center;
-            font-size: 1.3em;
-            margin-bottom: 15px;
-            height: 30px;
-        }
+        .btn-reset:hover { background: #d33425; }
+        .footer { text-align: center; color: #999; font-size: 12px; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🎮 이상한 틱택토</h1>
         <p class="subtitle">Tic-Tac-Toe But Strange</p>
-
-        <div class="rules-display">
-            <div class="rule-item">
-                <span class="rule-label">📋 승리 조건:</span>
-                <span id="victoryRule">대기 중...</span>
-            </div>
-            <div class="rule-item">
-                <span class="rule-label">🔄 턴 규칙:</span>
-                <span id="turnRule">대기 중...</span>
-            </div>
-            <div class="rule-item" id="specialRuleContainer" style="display: none;">
-                <span class="rule-label">✨ 특수 칸:</span>
-                <span id="specialRule">있음</span>
-            </div>
+        
+        <div class="rules">
+            <div><span class="label">📋 승리 조건:</span> <span id="victory">준비 중...</span></div>
+            <div><span class="label">🔄 턴 규칙:</span> <span id="turnRule">준비 중...</span></div>
+            <div id="special-info" style="display:none;"><span class="label">✨ 특수 칸:</span> 있음</div>
         </div>
-
-        <div class="turn-indicator" id="turnIndicator"></div>
 
         <div class="score">
             <div class="score-item">
-                <div class="score-label">🔵 당신 (O)</div>
+                <div>🔵 당신 (O)</div>
                 <div class="score-value" id="playerScore">0</div>
             </div>
             <div class="score-item">
-                <div class="score-label">🤖 AI (X)</div>
+                <div>🤖 AI (X)</div>
                 <div class="score-value" id="aiScore">0</div>
             </div>
         </div>
 
         <div class="status" id="status"></div>
-        <div class="game-over" id="gameOver"></div>
 
         <div class="board" id="board"></div>
 
         <div class="controls">
-            <button class="btn-play" id="playBtn" onclick="game.play()">게임 시작</button>
+            <button class="btn-start" id="startBtn">게임 시작</button>
             <button class="btn-reset" onclick="location.reload()">새로고침</button>
         </div>
 
         <div class="footer">
-            <p>💡 팁: 매 게임마다 다른 규칙이 적용됩니다!</p>
-            <p style="margin-top: 10px; font-size: 0.85em;">
-                <a href="https://github.com/Maroonred1340/Tac-Tic-Toe" target="_blank" style="color: #667eea; text-decoration: none;">
-                    GitHub에서 보기
-                </a>
-            </p>
+            <p>💡 매 게임마다 다른 규칙이 적용됩니다!</p>
         </div>
     </div>
 
     <script>
-        // 게임 로직
-        class StrangeTicTacToe {
+        class Game {
             constructor() {
-                this.board = [
-                    [null, null, null],
-                    [null, null, null],
-                    [null, null, null]
-                ];
+                this.board = [[null, null, null], [null, null, null], [null, null, null]];
                 this.playerScore = 0;
                 this.aiScore = 0;
-                this.gameOver = false;
-                this.currentTurn = 'O'; // 플레이어가 먼저
+                this.gameActive = false;
+                this.currentTurn = 'O';
                 this.rules = null;
-                this.sealedCells = new Set();
-                this.specialCells = {};
-                this.renderBoard();
-                this.randomizeRules();
+                this.render();
             }
 
             randomizeRules() {
-                const victoryTypes = [
-                    'classic', 'square_2x2', 'l_shape', 't_shape', 'cross',
-                    'corner_4', 'center_4', 'all_edges'
-                ];
-
-                const turnTypes = [
-                    'normal', 'double_place', 'flip_opponent', 'seal_random'
-                ];
-
+                const victories = ['classic', 'square_2x2', 'l_shape', 't_shape', 'cross', 'corner_4', 'center_4', 'all_edges'];
+                const turns = ['normal', 'double_place', 'flip_opponent', 'seal_random'];
+                
                 this.rules = {
-                    victory: victoryTypes[Math.floor(Math.random() * victoryTypes.length)],
-                    turn: turnTypes[Math.floor(Math.random() * turnTypes.length)],
-                    hasSpecialCells: Math.random() < 0.3
+                    victory: victories[Math.floor(Math.random() * victories.length)],
+                    turn: turns[Math.floor(Math.random() * turns.length)],
+                    hasSpecial: Math.random() < 0.3
                 };
 
-                if (this.rules.hasSpecialCells) {
-                    this.specialCells = {};
-                    const numSpecial = Math.floor(Math.random() * 3) + 1;
-                    const positions = [];
-                    for (let i = 0; i < 3; i++) {
-                        for (let j = 0; j < 3; j++) {
-                            positions.push([i, j]);
-                        }
-                    }
-                    positions.sort(() => Math.random() - 0.5);
-                    for (let i = 0; i < numSpecial; i++) {
-                        const pos = positions[i];
-                        this.specialCells[pos] = 'special';
-                    }
-                }
-
-                this.updateRulesDisplay();
-            }
-
-            updateRulesDisplay() {
                 const victoryNames = {
                     'classic': '3칸 가로/세로/대각선',
                     'square_2x2': '2x2 정사각형',
@@ -402,73 +173,36 @@
                     'seal_random': '랜덤 칸 봉인'
                 };
 
-                document.getElementById('victoryRule').textContent = 
-                    victoryNames[this.rules.victory] || this.rules.victory;
-                document.getElementById('turnRule').textContent = 
-                    turnNames[this.rules.turn] || this.rules.turn;
-
-                if (this.rules.hasSpecialCells) {
-                    document.getElementById('specialRuleContainer').style.display = 'block';
-                } else {
-                    document.getElementById('specialRuleContainer').style.display = 'none';
-                }
+                document.getElementById('victory').textContent = victoryNames[this.rules.victory];
+                document.getElementById('turnRule').textContent = turnNames[this.rules.turn];
+                document.getElementById('special-info').style.display = this.rules.hasSpecial ? 'block' : 'none';
             }
 
-            renderBoard() {
-                const boardElement = document.getElementById('board');
-                boardElement.innerHTML = '';
-
-                for (let i = 0; i < 3; i++) {
-                    for (let j = 0; j < 3; j++) {
-                        const cell = document.createElement('div');
-                        cell.className = 'cell';
-                        cell.textContent = this.board[i][j] || '';
-
-                        if (this.board[i][j]) {
-                            cell.classList.add(this.board[i][j].toLowerCase());
-                        }
-
-                        if (this.sealedCells.has(`${i},${j}`)) {
-                            cell.classList.add('sealed');
-                            cell.textContent = '🔒';
-                        }
-
-                        if (this.specialCells[`${i},${j}`]) {
-                            cell.classList.add('special-cell');
-                        }
-
-                        cell.onclick = () => this.playerMove(i, j);
-                        boardElement.appendChild(cell);
-                    }
-                }
+            start() {
+                this.board = [[null, null, null], [null, null, null], [null, null, null]];
+                this.gameActive = true;
+                this.currentTurn = 'O';
+                this.randomizeRules();
+                this.updateStatus();
+                this.render();
             }
 
             playerMove(row, col) {
-                if (this.gameOver || this.currentTurn !== 'O') return;
-                if (this.board[row][col] !== null) return;
-                if (this.sealedCells.has(`${row},${col}`)) return;
-
+                if (!this.gameActive || this.currentTurn !== 'O' || this.board[row][col]) return;
+                
                 this.board[row][col] = 'O';
-                this.renderBoard();
-
                 if (this.checkWin('O')) {
-                    document.getElementById('gameOver').textContent = '🎉 축하합니다! 당신이 이겼습니다!';
-                    document.getElementById('gameOver').className = 'game-over win';
-                    this.gameOver = true;
                     this.playerScore++;
-                    this.updateScore();
+                    this.endGame('축하합니다! 승리! 🎉');
                     return;
                 }
-
-                if (this.isBoardFull()) {
-                    document.getElementById('gameOver').textContent = '🤝 무승부입니다!';
-                    document.getElementById('gameOver').className = 'game-over draw';
-                    this.gameOver = true;
+                if (this.isFull()) {
+                    this.endGame('무승부입니다! 🤝');
                     return;
                 }
-
                 this.currentTurn = 'X';
                 this.updateStatus();
+                this.render();
                 setTimeout(() => this.aiMove(), 500);
             }
 
@@ -476,205 +210,138 @@
                 const available = [];
                 for (let i = 0; i < 3; i++) {
                     for (let j = 0; j < 3; j++) {
-                        if (this.board[i][j] === null && !this.sealedCells.has(`${i},${j}`)) {
-                            available.push([i, j]);
-                        }
+                        if (!this.board[i][j]) available.push([i, j]);
                     }
                 }
+                if (!available.length) return;
 
-                if (available.length === 0) {
-                    this.gameOver = true;
-                    return;
-                }
-
-                // AI 전략: 승리 > 차단 > 특수칸 > 중앙 > 랜덤
-                let move = this.findWinMove(available, 'X') ||
-                           this.findWinMove(available, 'O') ||
-                           this.findSpecialCell(available) ||
-                           this.findCenterCell(available) ||
-                           available[Math.floor(Math.random() * available.length)];
-
+                let move = this.findWin(available, 'X') || this.findWin(available, 'O') || available[Math.floor(Math.random() * available.length)];
                 this.board[move[0]][move[1]] = 'X';
-                this.renderBoard();
 
                 if (this.checkWin('X')) {
-                    document.getElementById('gameOver').textContent = '💔 AI가 승리했습니다!';
-                    document.getElementById('gameOver').className = 'game-over lose';
-                    this.gameOver = true;
                     this.aiScore++;
-                    this.updateScore();
+                    this.endGame('AI가 승리했습니다! 💔');
                     return;
                 }
-
-                if (this.isBoardFull()) {
-                    document.getElementById('gameOver').textContent = '🤝 무승부입니다!';
-                    document.getElementById('gameOver').className = 'game-over draw';
-                    this.gameOver = true;
+                if (this.isFull()) {
+                    this.endGame('무승부입니다! 🤝');
                     return;
                 }
-
                 this.currentTurn = 'O';
                 this.updateStatus();
+                this.render();
             }
 
-            findWinMove(available, player) {
-                for (let [row, col] of available) {
-                    this.board[row][col] = player;
+            findWin(available, player) {
+                for (let [r, c] of available) {
+                    this.board[r][c] = player;
                     if (this.checkWin(player)) {
-                        this.board[row][col] = null;
-                        return [row, col];
+                        this.board[r][c] = null;
+                        return [r, c];
                     }
-                    this.board[row][col] = null;
+                    this.board[r][c] = null;
                 }
                 return null;
             }
 
-            findSpecialCell(available) {
-                for (let [row, col] of available) {
-                    if (this.specialCells[`${row},${col}`]) {
-                        return [row, col];
-                    }
+            checkWin(p) {
+                const b = this.board;
+                const victory = this.rules.victory;
+
+                // Classic: 가로, 세로, 대각선
+                if (victory === 'classic') {
+                    for (let i = 0; i < 3; i++) if (b[i][0] === p && b[i][1] === p && b[i][2] === p) return true;
+                    for (let j = 0; j < 3; j++) if (b[0][j] === p && b[1][j] === p && b[2][j] === p) return true;
+                    if (b[0][0] === p && b[1][1] === p && b[2][2] === p) return true;
+                    if (b[0][2] === p && b[1][1] === p && b[2][0] === p) return true;
                 }
-                return null;
-            }
-
-            findCenterCell(available) {
-                return available.find(([r, c]) => r === 1 && c === 1) || null;
-            }
-
-            checkWin(player) {
-                const board = this.board;
-
-                // Classic: 3칸
-                const checkThree = () => {
-                    // 가로
-                    for (let i = 0; i < 3; i++) {
-                        if (board[i][0] === player && board[i][1] === player && board[i][2] === player) return true;
-                    }
-                    // 세로
-                    for (let j = 0; j < 3; j++) {
-                        if (board[0][j] === player && board[1][j] === player && board[2][j] === player) return true;
-                    }
-                    // 대각선
-                    if (board[0][0] === player && board[1][1] === player && board[2][2] === player) return true;
-                    if (board[0][2] === player && board[1][1] === player && board[2][0] === player) return true;
-                    return false;
-                };
 
                 // 2x2 정사각형
-                const checkSquare = () => {
+                if (victory === 'square_2x2') {
                     for (let i = 0; i < 2; i++) {
                         for (let j = 0; j < 2; j++) {
-                            if (board[i][j] === player && board[i][j+1] === player &&
-                                board[i+1][j] === player && board[i+1][j+1] === player) {
-                                return true;
-                            }
+                            if (b[i][j] === p && b[i][j+1] === p && b[i+1][j] === p && b[i+1][j+1] === p) return true;
                         }
                     }
-                    return false;
-                };
+                }
 
                 // ㄱ자 모양
-                const checkL = () => {
-                    const patterns = [
-                        [[0,0], [1,0], [2,0], [2,1]],
-                        [[0,0], [0,1], [0,2], [1,2]],
-                        [[0,2], [1,2], [2,2], [2,1]],
-                        [[0,0], [0,1], [0,2], [1,0]]
-                    ];
-                    return patterns.some(pattern => pattern.every(([r, c]) => board[r][c] === player));
-                };
+                if (victory === 'l_shape') {
+                    const patterns = [[[0,0],[1,0],[2,0],[2,1]], [[0,0],[0,1],[0,2],[1,2]], [[0,2],[1,2],[2,2],[2,1]], [[0,0],[0,1],[0,2],[1,0]]];
+                    for (let pat of patterns) if (pat.every(([r, c]) => b[r][c] === p)) return true;
+                }
 
                 // ㅗ자 모양
-                const checkT = () => {
-                    const patterns = [
-                        [[0,0], [0,1], [0,2], [1,1]],
-                        [[0,1], [1,1], [2,1], [1,0]],
-                        [[0,1], [1,1], [2,1], [1,2]],
-                        [[1,0], [1,1], [1,2], [2,1]]
-                    ];
-                    return patterns.some(pattern => pattern.every(([r, c]) => board[r][c] === player));
-                };
+                if (victory === 't_shape') {
+                    const patterns = [[[0,0],[0,1],[0,2],[1,1]], [[0,1],[1,1],[2,1],[1,0]], [[0,1],[1,1],[2,1],[1,2]], [[1,0],[1,1],[1,2],[2,1]]];
+                    for (let pat of patterns) if (pat.every(([r, c]) => b[r][c] === p)) return true;
+                }
 
                 // 십자가
-                const checkCross = () => {
-                    const pattern = [[0,1], [1,0], [1,1], [1,2], [2,1]];
-                    return pattern.every(([r, c]) => board[r][c] === player);
-                };
+                if (victory === 'cross') {
+                    const pat = [[0,1],[1,0],[1,1],[1,2],[2,1]];
+                    if (pat.every(([r, c]) => b[r][c] === p)) return true;
+                }
 
                 // 모서리 4칸
-                const checkCorners = () => {
-                    const corners = [[0,0], [0,2], [2,0], [2,2]];
-                    return corners.every(([r, c]) => board[r][c] === player);
-                };
+                if (victory === 'corner_4') {
+                    if (b[0][0] === p && b[0][2] === p && b[2][0] === p && b[2][2] === p) return true;
+                }
 
                 // 중앙 4칸
-                const checkCenter = () => {
-                    const center = [[0,1], [1,0], [1,2], [2,1]];
-                    return center.every(([r, c]) => board[r][c] === player);
-                };
+                if (victory === 'center_4') {
+                    const pat = [[0,1],[1,0],[1,2],[2,1]];
+                    if (pat.every(([r, c]) => b[r][c] === p)) return true;
+                }
 
                 // 모든 변
-                const checkEdges = () => {
-                    const edges = [[0,0], [0,1], [0,2], [1,0], [1,2], [2,0], [2,1], [2,2]];
-                    return edges.every(([r, c]) => board[r][c] === player);
-                };
+                if (victory === 'all_edges') {
+                    const pat = [[0,0],[0,1],[0,2],[1,0],[1,2],[2,0],[2,1],[2,2]];
+                    if (pat.every(([r, c]) => b[r][c] === p)) return true;
+                }
 
-                const checks = {
-                    'classic': checkThree,
-                    'square_2x2': checkSquare,
-                    'l_shape': checkL,
-                    't_shape': checkT,
-                    'cross': checkCross,
-                    'corner_4': checkCorners,
-                    'center_4': checkCenter,
-                    'all_edges': checkEdges
-                };
-
-                const checkFunc = checks[this.rules.victory] || checkThree;
-                return checkFunc();
+                return false;
             }
 
-            isBoardFull() {
+            isFull() {
                 return this.board.every(row => row.every(cell => cell !== null));
             }
 
-            updateStatus() {
-                const turnIndicator = document.getElementById('turnIndicator');
-                if (this.currentTurn === 'O') {
-                    turnIndicator.innerHTML = '🔵 <span style="color: #4285f4;">당신의 턴</span>';
-                } else {
-                    turnIndicator.innerHTML = '🤖 <span style="color: #ea4335;">AI의 턴</span>';
-                }
-            }
-
-            updateScore() {
+            endGame(msg) {
+                this.gameActive = false;
+                document.getElementById('status').innerHTML = `<span class="message">${msg}</span>`;
                 document.getElementById('playerScore').textContent = this.playerScore;
                 document.getElementById('aiScore').textContent = this.aiScore;
             }
 
-            play() {
-                this.board = [
-                    [null, null, null],
-                    [null, null, null],
-                    [null, null, null]
-                ];
-                this.gameOver = false;
-                this.currentTurn = 'O';
-                this.sealedCells.clear();
-                this.randomizeRules();
-                document.getElementById('gameOver').textContent = '';
-                document.getElementById('turnIndicator').innerHTML = '🔵 <span style="color: #4285f4;">당신의 턴</span>';
-                this.renderBoard();
+            updateStatus() {
+                if (this.currentTurn === 'O') {
+                    document.getElementById('status').innerHTML = '<span class="turn">🔵 당신의 턴</span>';
+                } else {
+                    document.getElementById('status').innerHTML = '<span class="ai-turn">🤖 AI의 턴</span>';
+                }
+            }
+
+            render() {
+                const boardEl = document.getElementById('board');
+                boardEl.innerHTML = '';
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        if (this.board[i][j]) {
+                            cell.textContent = this.board[i][j];
+                            cell.classList.add(this.board[i][j].toLowerCase());
+                        }
+                        cell.onclick = () => this.playerMove(i, j);
+                        boardEl.appendChild(cell);
+                    }
+                }
             }
         }
 
-        // 게임 시작
-        let game = new StrangeTicTacToe();
-        document.getElementById('playBtn').onclick = function() {
-            game.play();
-            this.textContent = '새 게임';
-        };
+        let game = new Game();
+        document.getElementById('startBtn').onclick = () => game.start();
     </script>
 </body>
 </html>
