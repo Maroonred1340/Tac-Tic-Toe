@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>이상한 틱택토 6x6</title>
+    <title>이상한 틱택토 8x8</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -20,7 +20,7 @@
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             padding: 30px;
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
         }
         h1 { text-align: center; color: #333; margin-bottom: 5px; }
@@ -36,21 +36,22 @@
         .label { font-weight: bold; color: #667eea; }
         .board {
             display: grid;
-            grid-template-columns: repeat(6, 45px);
-            gap: 4px;
+            grid-template-columns: repeat(8, 40px);
+            gap: 3px;
             margin: 20px auto;
             justify-content: center;
             background: #eee;
             padding: 8px;
             border-radius: 8px;
+            max-width: fit-content;
         }
         .cell {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             background: white;
             border: 2px solid #ddd;
-            border-radius: 4px;
-            font-size: 18px;
+            border-radius: 3px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
@@ -100,7 +101,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎮 이상한 틱택토 6x6</h1>
+        <h1>🎮 이상한 틱택토 8x8</h1>
         <p class="subtitle">Tic-Tac-Toe But Strange</p>
         
         <div class="rules">
@@ -137,8 +138,8 @@
     <script>
         class Game {
             constructor() {
-                this.size = 6;
-                this.board = Array(6).fill(null).map(() => Array(6).fill(null));
+                this.size = 8;
+                this.board = Array(8).fill(null).map(() => Array(8).fill(null));
                 this.playerScore = 0;
                 this.aiScore = 0;
                 this.gameActive = false;
@@ -189,7 +190,7 @@
             }
 
             start() {
-                this.board = Array(6).fill(null).map(() => Array(6).fill(null));
+                this.board = Array(8).fill(null).map(() => Array(8).fill(null));
                 this.gameActive = true;
                 this.currentTurn = 'O';
                 this.selectedCells = [];
@@ -252,8 +253,8 @@
 
             aiMove() {
                 const available = [];
-                for (let i = 0; i < 6; i++) {
-                    for (let j = 0; j < 6; j++) {
+                for (let i = 0; i < 8; i++) {
+                    for (let j = 0; j < 8; j++) {
                         if (!this.board[i][j]) available.push([i, j]);
                     }
                 }
@@ -330,8 +331,8 @@
 
                 // 가로 5칸
                 if (v === 'horizontal_5') {
-                    for (let i = 0; i < 6; i++) {
-                        for (let j = 0; j < 2; j++) {
+                    for (let i = 0; i < 8; i++) {
+                        for (let j = 0; j < 4; j++) {
                             if (b[i][j] === p && b[i][j+1] === p && b[i][j+2] === p && b[i][j+3] === p && b[i][j+4] === p) return true;
                         }
                     }
@@ -339,8 +340,8 @@
 
                 // 세로 5칸
                 if (v === 'vertical_5') {
-                    for (let j = 0; j < 6; j++) {
-                        for (let i = 0; i < 2; i++) {
+                    for (let j = 0; j < 8; j++) {
+                        for (let i = 0; i < 4; i++) {
                             if (b[i][j] === p && b[i+1][j] === p && b[i+2][j] === p && b[i+3][j] === p && b[i+4][j] === p) return true;
                         }
                     }
@@ -348,8 +349,8 @@
 
                 // 대각선 5칸
                 if (v === 'diagonal_5') {
-                    for (let i = 0; i < 2; i++) {
-                        for (let j = 0; j < 2; j++) {
+                    for (let i = 0; i < 4; i++) {
+                        for (let j = 0; j < 4; j++) {
                             if (b[i][j] === p && b[i+1][j+1] === p && b[i+2][j+2] === p && b[i+3][j+3] === p && b[i+4][j+4] === p) return true;
                             if (b[i][j+4] === p && b[i+1][j+3] === p && b[i+2][j+2] === p && b[i+3][j+1] === p && b[i+4][j] === p) return true;
                         }
@@ -358,8 +359,8 @@
 
                 // 2x2 정사각형
                 if (v === 'square_2x2') {
-                    for (let i = 0; i < 5; i++) {
-                        for (let j = 0; j < 5; j++) {
+                    for (let i = 0; i < 7; i++) {
+                        for (let j = 0; j < 7; j++) {
                             if (b[i][j] === p && b[i][j+1] === p && b[i+1][j] === p && b[i+1][j+1] === p) return true;
                         }
                     }
@@ -367,8 +368,8 @@
 
                 // 3x3 정사각형
                 if (v === 'square_3x3') {
-                    for (let i = 0; i < 4; i++) {
-                        for (let j = 0; j < 4; j++) {
+                    for (let i = 0; i < 6; i++) {
+                        for (let j = 0; j < 6; j++) {
                             let match = true;
                             for (let di = 0; di < 3; di++) {
                                 for (let dj = 0; dj < 3; dj++) {
@@ -415,18 +416,18 @@
 
                 // 4칸 연결
                 if (v === 'classic_4') {
-                    for (let i = 0; i < 6; i++) {
-                        for (let j = 0; j < 3; j++) {
+                    for (let i = 0; i < 8; i++) {
+                        for (let j = 0; j < 5; j++) {
                             if (b[i][j] === p && b[i][j+1] === p && b[i][j+2] === p && b[i][j+3] === p) return true;
                         }
                     }
-                    for (let i = 0; i < 3; i++) {
-                        for (let j = 0; j < 6; j++) {
+                    for (let i = 0; i < 5; i++) {
+                        for (let j = 0; j < 8; j++) {
                             if (b[i][j] === p && b[i+1][j] === p && b[i+2][j] === p && b[i+3][j] === p) return true;
                         }
                     }
-                    for (let i = 0; i < 3; i++) {
-                        for (let j = 0; j < 3; j++) {
+                    for (let i = 0; i < 5; i++) {
+                        for (let j = 0; j < 5; j++) {
                             if (b[i][j] === p && b[i+1][j+1] === p && b[i+2][j+2] === p && b[i+3][j+3] === p) return true;
                             if (b[i][j+3] === p && b[i+1][j+2] === p && b[i+2][j+1] === p && b[i+3][j] === p) return true;
                         }
@@ -470,8 +471,8 @@
             }
 
             isFull() {
-                for (let i = 0; i < 6; i++) {
-                    for (let j = 0; j < 6; j++) {
+                for (let i = 0; i < 8; i++) {
+                    for (let j = 0; j < 8; j++) {
                         if (!this.board[i][j]) return false;
                     }
                 }
@@ -498,8 +499,8 @@
             render() {
                 const boardEl = document.getElementById('board');
                 boardEl.innerHTML = '';
-                for (let i = 0; i < 6; i++) {
-                    for (let j = 0; j < 6; j++) {
+                for (let i = 0; i < 8; i++) {
+                    for (let j = 0; j < 8; j++) {
                         const cell = document.createElement('div');
                         cell.className = 'cell';
                         if (this.board[i][j]) {
