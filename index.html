@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>이상한 틱택토</title>
+    <title>이상한 틱택토 4x4</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -20,7 +20,7 @@
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             padding: 30px;
-            max-width: 500px;
+            max-width: 550px;
             width: 100%;
         }
         h1 { text-align: center; color: #333; margin-bottom: 5px; }
@@ -36,8 +36,8 @@
         .label { font-weight: bold; color: #667eea; }
         .board {
             display: grid;
-            grid-template-columns: repeat(3, 80px);
-            gap: 8px;
+            grid-template-columns: repeat(4, 60px);
+            gap: 6px;
             margin: 20px auto;
             justify-content: center;
             background: #eee;
@@ -45,12 +45,12 @@
             border-radius: 8px;
         }
         .cell {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             background: white;
             border: 2px solid #ddd;
             border-radius: 5px;
-            font-size: 32px;
+            font-size: 24px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
@@ -99,7 +99,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎮 이상한 틱택토</h1>
+        <h1>🎮 이상한 틱택토 4x4</h1>
         <p class="subtitle">Tic-Tac-Toe But Strange</p>
         
         <div class="rules">
@@ -136,7 +136,8 @@
     <script>
         class Game {
             constructor() {
-                this.board = [[null, null, null], [null, null, null], [null, null, null]];
+                this.size = 4;
+                this.board = Array(4).fill(null).map(() => Array(4).fill(null));
                 this.playerScore = 0;
                 this.aiScore = 0;
                 this.gameActive = false;
@@ -146,7 +147,12 @@
             }
 
             randomizeRules() {
-                const victories = ['classic', 'square_2x2', 'l_shape', 't_shape', 'cross', 'corner_4', 'center_4', 'all_edges'];
+                const victories = [
+                    'horizontal_4', 'vertical_4', 'diagonal_4',
+                    'square_2x2', 'square_3x3',
+                    'corners', 'edges', 'center_2x2',
+                    'classic_3'
+                ];
                 const turns = ['normal', 'double_place', 'flip_opponent', 'seal_random'];
                 
                 this.rules = {
@@ -156,14 +162,15 @@
                 };
 
                 const victoryNames = {
-                    'classic': '3칸 가로/세로/대각선',
+                    'horizontal_4': '가로 4칸',
+                    'vertical_4': '세로 4칸',
+                    'diagonal_4': '대각선 4칸',
                     'square_2x2': '2x2 정사각형',
-                    'l_shape': 'ㄱ자 모양',
-                    't_shape': 'ㅗ자 모양',
-                    'cross': '십자가',
-                    'corner_4': '모서리 4칸',
-                    'center_4': '중앙 4칸',
-                    'all_edges': '모든 변'
+                    'square_3x3': '3x3 정사각형',
+                    'corners': '4개 모서리',
+                    'edges': '테두리 모두',
+                    'center_2x2': '중앙 2x2',
+                    'classic_3': '3칸 연결'
                 };
 
                 const turnNames = {
@@ -179,7 +186,7 @@
             }
 
             start() {
-                this.board = [[null, null, null], [null, null, null], [null, null, null]];
+                this.board = Array(4).fill(null).map(() => Array(4).fill(null));
                 this.gameActive = true;
                 this.currentTurn = 'O';
                 this.randomizeRules();
@@ -208,8 +215,8 @@
 
             aiMove() {
                 const available = [];
-                for (let i = 0; i < 3; i++) {
-                    for (let j = 0; j < 3; j++) {
+                for (let i = 0; i < 4; i++) {
+                    for (let j = 0; j < 4; j++) {
                         if (!this.board[i][j]) available.push([i, j]);
                     }
                 }
@@ -246,65 +253,128 @@
 
             checkWin(p) {
                 const b = this.board;
-                const victory = this.rules.victory;
+                const v = this.rules.victory;
 
-                // Classic: 가로, 세로, 대각선
-                if (victory === 'classic') {
-                    for (let i = 0; i < 3; i++) if (b[i][0] === p && b[i][1] === p && b[i][2] === p) return true;
-                    for (let j = 0; j < 3; j++) if (b[0][j] === p && b[1][j] === p && b[2][j] === p) return true;
-                    if (b[0][0] === p && b[1][1] === p && b[2][2] === p) return true;
-                    if (b[0][2] === p && b[1][1] === p && b[2][0] === p) return true;
+                // 가로 4칸
+                if (v === 'horizontal_4') {
+                    for (let i = 0; i < 4; i++) {
+                        for (let j = 0; j < 1; j++) {
+                            if (b[i][j] === p && b[i][j+1] === p && b[i][j+2] === p && b[i][j+3] === p) return true;
+                        }
+                    }
+                }
+
+                // 세로 4칸
+                if (v === 'vertical_4') {
+                    for (let i = 0; i < 1; i++) {
+                        for (let j = 0; j < 4; j++) {
+                            if (b[i][j] === p && b[i+1][j] === p && b[i+2][j] === p && b[i+3][j] === p) return true;
+                        }
+                    }
+                }
+
+                // 대각선 4칸
+                if (v === 'diagonal_4') {
+                    // ↘
+                    for (let i = 0; i < 1; i++) {
+                        for (let j = 0; j < 1; j++) {
+                            if (b[i][j] === p && b[i+1][j+1] === p && b[i+2][j+2] === p && b[i+3][j+3] === p) return true;
+                        }
+                    }
+                    // ↙
+                    for (let i = 0; i < 1; i++) {
+                        for (let j = 3; j < 4; j++) {
+                            if (b[i][j] === p && b[i+1][j-1] === p && b[i+2][j-2] === p && b[i+3][j-3] === p) return true;
+                        }
+                    }
                 }
 
                 // 2x2 정사각형
-                if (victory === 'square_2x2') {
-                    for (let i = 0; i < 2; i++) {
-                        for (let j = 0; j < 2; j++) {
+                if (v === 'square_2x2') {
+                    for (let i = 0; i < 3; i++) {
+                        for (let j = 0; j < 3; j++) {
                             if (b[i][j] === p && b[i][j+1] === p && b[i+1][j] === p && b[i+1][j+1] === p) return true;
                         }
                     }
                 }
 
-                // ㄱ자 모양
-                if (victory === 'l_shape') {
-                    const patterns = [[[0,0],[1,0],[2,0],[2,1]], [[0,0],[0,1],[0,2],[1,2]], [[0,2],[1,2],[2,2],[2,1]], [[0,0],[0,1],[0,2],[1,0]]];
-                    for (let pat of patterns) if (pat.every(([r, c]) => b[r][c] === p)) return true;
+                // 3x3 정사각형
+                if (v === 'square_3x3') {
+                    for (let i = 0; i < 2; i++) {
+                        for (let j = 0; j < 2; j++) {
+                            let match = true;
+                            for (let di = 0; di < 3; di++) {
+                                for (let dj = 0; dj < 3; dj++) {
+                                    if (b[i+di][j+dj] !== p) match = false;
+                                }
+                            }
+                            if (match) return true;
+                        }
+                    }
                 }
 
-                // ㅗ자 모양
-                if (victory === 't_shape') {
-                    const patterns = [[[0,0],[0,1],[0,2],[1,1]], [[0,1],[1,1],[2,1],[1,0]], [[0,1],[1,1],[2,1],[1,2]], [[1,0],[1,1],[1,2],[2,1]]];
-                    for (let pat of patterns) if (pat.every(([r, c]) => b[r][c] === p)) return true;
+                // 4개 모서리
+                if (v === 'corners') {
+                    if (b[0][0] === p && b[0][3] === p && b[3][0] === p && b[3][3] === p) return true;
                 }
 
-                // 십자가
-                if (victory === 'cross') {
-                    const pat = [[0,1],[1,0],[1,1],[1,2],[2,1]];
-                    if (pat.every(([r, c]) => b[r][c] === p)) return true;
+                // 테두리 모두
+                if (v === 'edges') {
+                    let count = 0;
+                    for (let i = 0; i < 4; i++) {
+                        if (b[0][i] === p) count++;
+                        if (b[3][i] === p) count++;
+                        if (i > 0 && i < 3) {
+                            if (b[i][0] === p) count++;
+                            if (b[i][3] === p) count++;
+                        }
+                    }
+                    if (count === 12) return true;
                 }
 
-                // 모서리 4칸
-                if (victory === 'corner_4') {
-                    if (b[0][0] === p && b[0][2] === p && b[2][0] === p && b[2][2] === p) return true;
+                // 중앙 2x2
+                if (v === 'center_2x2') {
+                    if (b[1][1] === p && b[1][2] === p && b[2][1] === p && b[2][2] === p) return true;
                 }
 
-                // 중앙 4칸
-                if (victory === 'center_4') {
-                    const pat = [[0,1],[1,0],[1,2],[2,1]];
-                    if (pat.every(([r, c]) => b[r][c] === p)) return true;
-                }
-
-                // 모든 변
-                if (victory === 'all_edges') {
-                    const pat = [[0,0],[0,1],[0,2],[1,0],[1,2],[2,0],[2,1],[2,2]];
-                    if (pat.every(([r, c]) => b[r][c] === p)) return true;
+                // 3칸 연결 (어디든)
+                if (v === 'classic_3') {
+                    // 가로
+                    for (let i = 0; i < 4; i++) {
+                        for (let j = 0; j < 2; j++) {
+                            if (b[i][j] === p && b[i][j+1] === p && b[i][j+2] === p) return true;
+                        }
+                    }
+                    // 세로
+                    for (let i = 0; i < 2; i++) {
+                        for (let j = 0; j < 4; j++) {
+                            if (b[i][j] === p && b[i+1][j] === p && b[i+2][j] === p) return true;
+                        }
+                    }
+                    // 대각선 ↘
+                    for (let i = 0; i < 2; i++) {
+                        for (let j = 0; j < 2; j++) {
+                            if (b[i][j] === p && b[i+1][j+1] === p && b[i+2][j+2] === p) return true;
+                        }
+                    }
+                    // 대각선 ↙
+                    for (let i = 0; i < 2; i++) {
+                        for (let j = 2; j < 4; j++) {
+                            if (b[i][j] === p && b[i+1][j-1] === p && b[i+2][j-2] === p) return true;
+                        }
+                    }
                 }
 
                 return false;
             }
 
             isFull() {
-                return this.board.every(row => row.every(cell => cell !== null));
+                for (let i = 0; i < 4; i++) {
+                    for (let j = 0; j < 4; j++) {
+                        if (!this.board[i][j]) return false;
+                    }
+                }
+                return true;
             }
 
             endGame(msg) {
@@ -325,8 +395,8 @@
             render() {
                 const boardEl = document.getElementById('board');
                 boardEl.innerHTML = '';
-                for (let i = 0; i < 3; i++) {
-                    for (let j = 0; j < 3; j++) {
+                for (let i = 0; i < 4; i++) {
+                    for (let j = 0; j < 4; j++) {
                         const cell = document.createElement('div');
                         cell.className = 'cell';
                         if (this.board[i][j]) {
