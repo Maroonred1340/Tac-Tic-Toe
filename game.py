@@ -11,7 +11,6 @@ class VictoryType(Enum):
     DIAGONAL_4 = "diagonal_4"  # 대각선 4칸
     SQUARE_2X2 = "square_2x2"  # 2x2 정사각형
     L_SHAPE = "l_shape"  # ㄱ자 모양
-    T_SHAPE = "t_shape"  # ㅗ자 모양
     CROSS = "cross"  # 십자가
     CORNER_4 = "corner_4"  # 모서리 4칸
     CENTER_4 = "center_4"  # 중앙 4칸
@@ -22,6 +21,8 @@ class VictoryType(Enum):
     SYMMETRY = "symmetry"  # 대칭 구조
     ALL_EDGES = "all_edges"  # 모든 변
     CLASSIC = "classic"  # 기본 3칸
+    SPIRAL = "spiral"  # 나선형
+    STAR = "star"  # 별 모양
 
 class TurnType(Enum):
     """턴 규칙 타입"""
@@ -58,8 +59,8 @@ class GameRules:
     score_target: int = 5
     powers_enabled: bool = True
 
-class StrangeTicTacToe:
-    """이상한 틱택토 게임"""
+class TacTicToe:
+    """택틱토 게임"""
     
     def __init__(self):
         self.board = [[None for _ in range(3)] for _ in range(3)]
@@ -128,6 +129,10 @@ class StrangeTicTacToe:
                 else:
                     row += ". "
             print(row)
+        
+        # 마지막 수 표시
+        if self.last_move:
+            print(f"\n📍 마지막 수: {self.last_move}")
         print()
 
     def is_valid_move(self, row: int, col: int) -> bool:
@@ -222,19 +227,6 @@ class StrangeTicTacToe:
                 return True
         return False
 
-    def check_t_shape(self, player: str) -> bool:
-        """ㅗ자 모양 확인"""
-        t_patterns = [
-            [(0,0), (0,1), (0,2), (1,1)],  # ㅗ
-            [(0,1), (1,1), (2,1), (1,0)],  # ㅓ
-            [(0,1), (1,1), (2,1), (1,2)],  # ㅏ
-            [(1,0), (1,1), (1,2), (2,1)],  # ㅜ
-        ]
-        for pattern in t_patterns:
-            if all(self.board[r][c] == player for r, c in pattern):
-                return True
-        return False
-
     def check_cross(self, player: str) -> bool:
         """십자가 모양 확인"""
         cross_pattern = [(0,1), (1,0), (1,1), (1,2), (2,1)]
@@ -324,6 +316,30 @@ class StrangeTicTacToe:
         ]
         return all(self.board[r][c] == player for r, c in edges)
 
+    def check_spiral(self, player: str) -> bool:
+        """나선형 패턴 확인"""
+        spiral_patterns = [
+            [(0,0), (0,1), (1,1), (2,1), (2,0)],
+            [(0,2), (1,2), (1,1), (1,0), (0,0)],
+            [(2,2), (2,1), (1,1), (0,1), (0,2)],
+        ]
+        for pattern in spiral_patterns:
+            if all(self.board[r][c] == player for r, c in pattern):
+                return True
+        return False
+
+    def check_star(self, player: str) -> bool:
+        """별 모양 패턴 확인"""
+        star_patterns = [
+            [(0,1), (1,0), (1,1), (1,2), (2,1)],
+            [(0,0), (0,1), (1,1), (2,0), (2,1)],
+            [(0,1), (0,2), (1,1), (2,1), (2,2)],
+        ]
+        for pattern in star_patterns:
+            if all(self.board[r][c] == player for r, c in pattern):
+                return True
+        return False
+
     def check_classic_win(self, player: str) -> bool:
         """기본 3칸 승리 확인"""
         return (self.check_horizontal_4(player) or
@@ -341,7 +357,6 @@ class StrangeTicTacToe:
             VictoryType.DIAGONAL_4: self.check_diagonal_4,
             VictoryType.SQUARE_2X2: self.check_square_2x2,
             VictoryType.L_SHAPE: self.check_l_shape,
-            VictoryType.T_SHAPE: self.check_t_shape,
             VictoryType.CROSS: self.check_cross,
             VictoryType.CORNER_4: self.check_corner_4,
             VictoryType.CENTER_4: self.check_center_4,
@@ -352,6 +367,8 @@ class StrangeTicTacToe:
             VictoryType.SYMMETRY: self.check_symmetry,
             VictoryType.ALL_EDGES: self.check_all_edges,
             VictoryType.CLASSIC: self.check_classic_win,
+            VictoryType.SPIRAL: self.check_spiral,
+            VictoryType.STAR: self.check_star,
         }
         
         check_func = victory_checks.get(self.rules.victory_type, self.check_classic_win)
@@ -429,7 +446,7 @@ class StrangeTicTacToe:
     def play_game(self):
         """게임 플레이"""
         print("=" * 40)
-        print("  🎮 이상한 틱택토 게임 시작! 🎮")
+        print("  🎮 택틱토 게임 시작! 🎮")
         print("=" * 40)
         
         # 규칙 랜덤화
@@ -500,13 +517,13 @@ class StrangeTicTacToe:
 
 def main():
     """메인 함수"""
-    game = StrangeTicTacToe()
+    game = TacTicToe()
     game.play_game()
     
     while True:
         again = input("\n다시 플레이하시겠습니까? (y/n): ").strip().lower()
         if again == 'y':
-            game = StrangeTicTacToe()
+            game = TacTicToe()
             game.play_game()
         else:
             print("게임을 종료합니다!")
